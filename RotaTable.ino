@@ -1,4 +1,4 @@
-#include <MenuBackend.h>  //from http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
+﻿#include <MenuBackend.h>  //from http://www.arduino.cc/playground/uploads/Profiles/MenuBackend_1-4.zip
 #include <LiquidCrystal.h>
 
 //Define pins for easier reference in the code
@@ -26,11 +26,10 @@ volatile boolean KNOB_TURNED = false;   // true if rotary encoder has been turne
 volatile int REDUCE_RESOLUTION = 0;     // counts up or down until +/-10 to reduce encoder resolution
 
 int STEPS_TO_FULL_ROTATION = 9800;   //count the amount of steps of the small stepper until the scanplate has fully rotated 
-//int MOTOR_MULTIPLIER = 1;         //no idea what this is for
-int BAUD_IDX = 5;//Speed to communicate with
+int BAUD_IDX = 5;			//Speed to communicate with
 boolean DEBUG = false;            //set this to true to enable serial println of debug msgs
 int PLATE_RPM = 1;                //rpm for scanplate
-int PLATE_ANGLE = 10;            //angle for rotation steps 
+int PLATE_ANGLE = 45;            //angle for rotation steps 
 boolean INSETTINGS = false;       //state of settings menu
 int SHUTTER_IDX = 4;
 
@@ -194,10 +193,12 @@ void menuUseEvent(MenuUseEvent used)
   }
 
   if (used.item == sls_start) {
-    structuredLight(12.0);
+    SELECT_FIRED = false;
+    structuredLight(PLATE_ANGLE);
   } 
   
   if (used.item == motor_start) {
+    SELECT_FIRED = false;
     motorScan();
   }
 
@@ -395,7 +396,7 @@ void set_baudrate() {
       KNOB_TURNED=false;
       lcd.clear();
       lcd.setCursor(0,2);
-      lcd.print("Baud: " + String(BAUDRATES[BAUD_IDX])); //FIXME: the last 3 values of the Baudrate array produce strange results
+      lcd.print("Baud: " + String(BAUDRATES[BAUD_IDX]));
     }
   }
   SELECT_FIRED=false;
@@ -404,9 +405,6 @@ void set_baudrate() {
 
 
 void set_photog_timing() {
-  /*lcd.clear();
-  lcd.print("NOT IMPLEMENTED");
-  return;*/
   lcd.clear();
   lcd.print("Set Shutterspeed");
   lcd.setCursor(0,2);
@@ -523,29 +521,38 @@ void structuredLight(float angle) {
   int ch=0;
   
   while(!SELECT_FIRED) {
+    lcd.println("Waiting for David");
 
     if(Serial.available()>0) {
       ch = Serial.read();
+
     }
-
-    // WENN MODUS STANDALONE
     
-    if (ch == 84){
+    if (ch == 84){ //Wait for David to send ready signal
       ch = 0;
-
+      
+      lcd.clear();
+      lcd.print("Adding Scan to list");
       Serial.println("A");            //Tell David to move the scan to the scan list
+
+      lcd.clear();
+      lcd.print("Switching to SLS");
       Serial.println("4");            //Tell David to go to structured light mode
+
       // FINDE HERAUS WIE WEIT GEDREHT WERDEN SOLL - LESE POTI AUS/LESE CONFIG AUS
       motorStep(floor(angle*(STEPS_TO_FULL_ROTATION/360.0)), PLATE_RPM); //rotate table
 
+      lcd.clear();
+      lcd.print("Scanning....");
       Serial.println("S");            //Tell david to scan 
     }
   }
 }
 
 void motorScan() {
-
-  int ch=0;
+  lcd.println("NOT IMPLEMENTED");
+  return;
+ /* int ch=0;
   
    while(true) {
     if(Serial.available()>0) {
@@ -564,7 +571,7 @@ void motorScan() {
 
       Serial.println("S");            //Tell david to scan 
     }
-  }
+  }*/
 }
 
 /* rotate plate 360 deg at the desired speed */
