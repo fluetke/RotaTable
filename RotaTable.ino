@@ -515,7 +515,8 @@ void photogrammetry(float angle, float timing) {
 }
 
 /* scan in structured light mode
-  thanks to code by *USERNAME HERE* */ //TODO: insert correct author here
+  adapted from code by the folks at virtumake.com
+  http://www.virtumake.com/files/VirtuCube_V05.ino */
 void structuredLight(float angle) {
 
   int ch=0;
