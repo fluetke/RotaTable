@@ -540,7 +540,7 @@ void structuredLight(float angle) {
       lcd.print("Switching to SLS");
       Serial.println("4");            //Tell David to go to structured light mode
 
-      // FINDE HERAUS WIE WEIT GEDREHT WERDEN SOLL - LESE POTI AUS/LESE CONFIG AUS
+      // figure out how far to spin the turntable
       motorStep(floor(angle*(STEPS_TO_FULL_ROTATION/360.0)), PLATE_RPM); //rotate table
 
       lcd.clear();
@@ -567,7 +567,7 @@ void motorScan() {
 
       Serial.println("A");            //Tell david to move the scan to the scan list
       Serial.println("4");            //Tell David to go to structured light mode
-    // FINDE HERAUS WIE WEIT GEDREHT WERDEN SOLL - LESE POTI AUS/LESE CONFIG AUS
+    // figure out how far to spin the turntable
       motorStep(15);                //rotate table 15 degrees
 
       Serial.println("S");            //Tell david to scan 
